@@ -1,9 +1,10 @@
+#include <errno.h>
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#include <errno.h>
 
 #define _XOPEN_SOURCE 500
 #include <ftw.h>
@@ -60,18 +61,18 @@ prune_worker (const char *filepath, const struct stat *sb, int typeflag, struct 
          if (g_policy->should_dry_run)
             {
                printf ("[DRY RUN] DELETE: '%s'   (AGE: %.1f DAYS, SIZE: %lld "
-                       "BYTES)",
+                       "BYTES)\n",
                        filepath, age_days, sb->st_size);
             }
          else
             {
                if (unlink (filepath) == 0)
                   {
-                     printf (stdout, "[SUCCESS] DELETED '%s'", filepath);
+                     printf (stdout, "[SUCCESS] DELETED '%s'\n", filepath);
                   }
                else
                   {
-                     fprintf (stderr, "[WARNING] COULD NOT DELETE '%s'", filepath);
+                     fprintf (stderr, "[WARNING] COULD NOT DELETE '%s'\n", filepath);
                   }
             }
       }
@@ -90,21 +91,40 @@ prune_run (const char *path)
    return 0;
 }
 
+void
+expand_tilde (char *path, char *buf, size_t bufsize)
+{
+   if (path[0] == '~')
+      {
+         const char *homedir = getenv ("HOME");
+         if (homedir)
+            {
+               snprintf (buf, bufsize, "%s%s", homedir, path + 1);
+               return;
+            }
+      }
+   
+   strncpy (buf, path, bufsize);
+}
+
 int
 main (void)
 {
-   /**
-      [TODO]
-      - ASSIGN =&p= TO =g_policy=
-      - INVOKE =nftw= FOR BOTH =tmpdir= AND =cachedir= WITH =FTW_PHYS=
-      - USE =FTW_PHYS= TO AVOID FOLLOWING SYMLINKS
-    */
-
    policy_t p = { 0 };
    policy_init (&p);
    g_policy = &p;
 
+   char expanded_tmpdir[65536];
+   char expanded_cachedir[65536];
+
+   expand_tilde (p.tmpdir, expanded_tmpdir, sizeof (expanded_tmpdir));
+   expand_tilde (p.cachedir, expanded_cachedir, sizeof (expanded_cachedir));
+
+   printf ("[INFO] PRUNING %s...\n", expanded_tmpdir);
+   prune_run (expanded_tmpdir);
    
+   printf ("[INFO] PRUNING %s...\n", expanded_cachedir);
+   prune_run (expanded_cachedir);
 
    return 0;
 }
