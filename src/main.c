@@ -70,11 +70,22 @@ prune_worker (const char *filepath, const struct stat *sb, int typeflag, struct 
                   }
                else
                   {
-                     fprintf (stderr, "[ERROR] COULD NOT DELETE '%s'", filepath);
+                     fprintf (stderr, "[WARNING] COULD NOT DELETE '%s'", filepath);
                   }
             }
       }
 
+   return 0;
+}
+
+int
+prune_run (const char *path)
+{
+   if (nftw (path, prune_worker, 16, FTW_PHYS | FTW_MOUNT) == -1)
+      {
+         fprintf (stderr, "[ERROR] FAILED TO ACCESS '%s' : %s\n", path, strerror (errno));
+         return -1;
+      }
    return 0;
 }
 
