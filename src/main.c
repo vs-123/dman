@@ -138,6 +138,9 @@ print_usage (const char *program_name)
    printf (
        "[USAGE] %s [FLAGS] [<DIRECTORY_PATH> <MAX_AGE_IN_DAYS> <MIN_SIZE>]\n",
        program_name);
+   printf (
+	   "[DESC.] DELETE CONTENTS OF <DIRECTORY_PATH> THAT ARE EITHER OLDER THAN <MAX_AGE_IN_DAYS> OR LARGER THAN <MIN_SIZE> BYTES\n");
+
    printf ("[FLAGS]\n");
    popt ("--HELP, -H, -?", "PRINT THIS HELP MESSAGE AND EXIT");
    popt ("--INFO, -I", "PRINT INFORMATION ABOUT THIS PROGRAM AND EXIT");
@@ -234,9 +237,10 @@ parse_arguments (int argc, char **argv, policy_t *p)
          return -1;
       }
 
-   p->dir      = argv[data_idx];
-   p->max_age  = age;
-   p->min_size = size;
+   p->dir       = argv[data_idx];
+   p->max_age   = age;
+   p->min_size  = size;
+   p->max_depth = 5;
 
    return 1;
 }
@@ -259,6 +263,7 @@ main (int argc, char **argv)
 
    printf ("[STATUS] PRUNING %s...\n", expanded_dir);
    prune_run (expanded_dir);
+   printf ("[STATUS] DONE. EXITING...\n");
 
    return 0;
 }
