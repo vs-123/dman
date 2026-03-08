@@ -49,7 +49,27 @@ prune_worker (const char *filepath, const struct stat *sb, int typeflag,
          return 0;
       }
 
-   /* [TODO] EVALUATE POLICY -- AGE + SIZE */
+   time_t now      = time (NULL);
+   double age_days = difftime (now, sb->st_mtime) / (60 * 60 * 24);
+
+   bool is_beyond_max_age  = age_days > g_policy->max_age;
+   bool is_beyond_min_size = sb->st_size > g_policy->min_size;
+
+   if (is_beyond_max_age || is_beyond_min_size)
+      {
+         if (g_policy->should_dry_run)
+            {
+               printf ("[DRY RUN] DELETE: '%s'   (AGE: %.1f DAYS, SIZE: %lld "
+                       "BYTES)",
+                       filepath, age_days, sb->st_size);
+            }
+         else
+            {
+               /* [TODO] DELETE */
+            }
+      }
+
+   return 0;
 }
 
 int
