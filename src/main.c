@@ -36,8 +36,7 @@ policy_init (policy_t *p)
 static policy_t *g_policy = NULL;
 
 int
-prune_worker (const char *filepath, const struct stat *sb, int typeflag,
-              struct FTW *ftwbuf)
+prune_worker (const char *filepath, const struct stat *sb, int typeflag, struct FTW *ftwbuf)
 {
    if (ftwbuf->level > g_policy->max_depth)
       {
@@ -65,7 +64,14 @@ prune_worker (const char *filepath, const struct stat *sb, int typeflag,
             }
          else
             {
-               /* [TODO] DELETE */
+               if (unlink (filepath) == 0)
+                  {
+                     printf (stdout, "[SUCCESS] DELETED '%s'", filepath);
+                  }
+               else
+                  {
+                     fprintf (stderr, "[ERROR] COULD NOT DELETE '%s'", filepath);
+                  }
             }
       }
 
