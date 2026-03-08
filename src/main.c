@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
+#include <errno.h>
 
 #define _XOPEN_SOURCE 500
 #include <ftw.h>
@@ -98,6 +99,12 @@ main (void)
       - INVOKE =nftw= FOR BOTH =tmpdir= AND =cachedir= WITH =FTW_PHYS=
       - USE =FTW_PHYS= TO AVOID FOLLOWING SYMLINKS
     */
+
+   policy_t p = { 0 };
+   policy_init (&p);
+   g_policy = &p;
+
+   
 
    return 0;
 }
