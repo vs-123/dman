@@ -1,6 +1,12 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdio.h>
+#include <string.h>
+#include <time.h>
+
+#define _XOPEN_SOURCE 500
+#include <ftw.h>
+#include <unistd.h>
 
 typedef struct
 {
@@ -27,11 +33,29 @@ policy_init (policy_t *p)
    p->cachedir       = "~/.cache/";
 }
 
+static policy_t *g_policy = NULL;
+
+int
+prune_worker (const char *filepath, const struct stat *sb, int typeflag,
+              struct FTW *ftwbuf)
+{
+   /**
+      [TODO]
+      - ENFORCE DEPTH LIMIT
+      - PROCESS REGULAR FILES ONLY
+      - EVALUATE POLICY -- AGE + SIZE
+    */
+}
+
 int
 main (void)
 {
-   policy_t p = { 0 };
-   policy_init (&p);
+   /**
+      [TODO]
+      - ASSIGN =&p= TO =g_policy=
+      - INVOKE =nftw= FOR BOTH =tmpdir= AND =cachedir= WITH =FTW_PHYS=
+      - USE =FTW_PHYS= TO AVOID FOLLOWING SYMLINKS
+    */
 
    return 0;
 }
