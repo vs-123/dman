@@ -16,24 +16,8 @@ typedef struct
    size_t max_age;
    size_t min_size;
    size_t max_depth;
-   char *tmpdir;
-   char *cachedir;
+   char *dir;
 } policy_t;
-
-void
-policy_init (policy_t *p)
-{
-   /**
-    * MAKE THIS CONFIGURABLE LATER
-    * DETERMINE =tmpdir= AND =cachedir= DYNAMICALLY LATER
-    */
-   p->should_dry_run = true;
-   p->max_age        = 1;
-   p->min_size       = 1;
-   p->max_depth      = 5;
-   p->tmpdir         = "/tmp/";
-   p->cachedir       = "~/.cache/";
-}
 
 static policy_t *g_policy = NULL;
 
@@ -103,28 +87,119 @@ expand_tilde (char *path, char *buf, size_t bufsize)
                return;
             }
       }
-   
+
    strncpy (buf, path, bufsize);
 }
 
 int
-main (void)
+strncmpci (char const *str1, char const *str2, unsigned int n)
 {
-   policy_t p = { 0 };
-   policy_init (&p);
-   g_policy = &p;
+   for (unsigned int i = 0; i < n; i++)
+      {
+         int cmp = tolower (*str1) - tolower (*str2);
+         if (!*str1 || !*str2 || cmp != 0)
+            {
+               return cmp;
+            }
+         str1++, str2++;
+      }
 
-   char expanded_tmpdir[65536];
-   char expanded_cachedir[65536];
+   return 0;
+}
 
-   expand_tilde (p.tmpdir, expanded_tmpdir, sizeof (expanded_tmpdir));
-   expand_tilde (p.cachedir, expanded_cachedir, sizeof (expanded_cachedir));
+void
+print_usage (const char *program_name)
+{
+#define popt(opt, desc) printf ("   %-45s %s\n", opt, desc)
+   printf ("[USAGE] %s [FLAGS] [<DIRECTORY_PATH> <MAX_AGE_IN_DAYS> <MIN_SIZE>]\n", program_name);
+   printf ("[FLAGS]\n");
+   popt ("--HELP, -H, -?", "PRINT THIS HELP MESSAGE AND EXIT");
+   popt ("--INFO, -I", "PRINT INFORMATION ABOUT THIS PROGRAM AND EXIT");
+   popt ("--DRY-RUN, -N", "PRINTS TO STDOUT WHAT WOULD BE DELETED WITHOUT ACTUALLY UNLINKING");
+   printf ("[NOTE] FLAGS ARE NOT CASE-SENSITIVE\n");
+#undef popt
+}
 
-   printf ("[INFO] PRUNING %s...\n", expanded_tmpdir);
-   prune_run (expanded_tmpdir);
-   
-   printf ("[INFO] PRUNING %s...\n", expanded_cachedir);
-   prune_run (expanded_cachedir);
+void
+print_info (void)
+{
+#define pinfo(aspect, detail) printf ("   * %-17s %s\n", aspect, detail)
+   printf ("[INFO]\n");
+   printf ("   DMAN -- TODO\n");
+   printf ("\n");
+   pinfo ("[AUTHOR]", "vs-123 @ https://github.com/vs-123");
+   pinfo ("[REPOSITORY]", "https://github.com/vs-123/dman");
+   pinfo ("[LICENSE]", "GNU AFFERO GENERAL PUBLIC LICENSE VERSION 3.0 OR LATER");
+#undef pinfo
+}
+
+int
+main (int argc, char **argv)
+{
+   const char *program_name = argv[0];
+   policy_t p               = { 0 };
+   g_policy                 = &p;
+
+   if (argc < 2)
+      {
+         print_usage (program_name);
+         return 1;
+      }
+
+   if (argv[1][0] == '-')
+      {
+         if (strncmpci (argv[1], "-h", 2) == 0 || strncmpci (argv[1], "--help", 6) == 0)
+            {
+               print_usage (program_name);
+               return 0;
+            }
+         else if (strncmpci (argv[1], "-i", 2) == 0 || strncmpci (argv[1], "--info", 6) == 0)
+            {
+               print_info (program_name);
+               return 0;
+            }
+         else if (strncmpci (argv[1], "-n", 2) == 0 || strncmpci (argv[1], "--dry-run", 9) == 0)
+            {
+               p.should_dry_run = true;
+            }
+         else
+            {
+               fprintf (stderr, "[ERROR] UNRECOGNISED FLAG, USE --HELP\n");
+               return 1;
+            }
+      }
+
+   if (argc < 4)
+      {
+         fprintf (stderr,
+                  "[ERROR] EXPECTED <DIRECTORY_PATH> <MAX_AGE_IN_DAYS> <MIN_SIZE>, USE --HELP\n");
+      }
+
+   char *dirpath;
+   char *max_age_days;
+   char *min_size;
+
+   if (p.should_dry_run)
+      {
+         dirpath      = argv[2];
+         max_age_days = argv[3];
+         min_size     = argv[4];
+      }
+   else
+      {
+         dirpath      = argv[1];
+         max_age_days = argv[2];
+         min_size     = argv[3];
+      }
+
+   p.dir = dirpath;
+   p.max_age = max_age_days;
+   p.min_size = min_size;
+
+   expand_tilde (p.dir, expanded_dir, sizeof (expanded_dir));
+
+   printf ("[INFO] PRUNING %s...\n", expanded_dir);
+   prune_run (expanded_dir);
 
    return 0;
 }
