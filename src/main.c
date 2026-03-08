@@ -39,12 +39,17 @@ int
 prune_worker (const char *filepath, const struct stat *sb, int typeflag,
               struct FTW *ftwbuf)
 {
-   /**
-      [TODO]
-      - ENFORCE DEPTH LIMIT
-      - PROCESS REGULAR FILES ONLY
-      - EVALUATE POLICY -- AGE + SIZE
-    */
+   if (ftwbuf->level > g_policy->max_depth)
+      {
+         return 0;
+      }
+
+   if (typeflag != FTW_F)
+      {
+         return 0;
+      }
+
+   /* [TODO] EVALUATE POLICY -- AGE + SIZE */
 }
 
 int
