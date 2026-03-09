@@ -91,7 +91,15 @@ This repository provides two scripts located in the =scripts/= directory -- =gen
 - *gen-test.sh* -- Generates two identical directory structures =dummy-cache-A= and =dummy-cache-B= which contain a mix of 1MB and 5MB files produced with =dd= and =/dev/urandom=. This ensures the test environment is consistent across multiple runs and accurately simulates typical cache behaviour.
 
 - *run-bench.sh* -- Utilises =/usr/bin/time -l= to capture detailed resource statistics during the execution of both =dman= and =find=. These metrics are piped into individual text files to provide the comparative data presented above.
-  
+
+** DISCLAIMER
+
+=dman= was originally developed as a specialised, single-purpose tool intended to address my personal requirements for a lightweight, policy-based filesystem maintenance. This is not designed to replace mature, general-purpose utilities like =find=, =rm= or professional-grade storage management systems.
+
+Although the provided benchmarks demonstrate efficiency in specific scenarios, it is important to note that this project makes no claims of superiority or universal applicability.
+
+It is recommended to use it for its intended purpose, with the understanding that it is a specialised utility and not a general-purpose replacement.
+
 ** LICENSE
 
 This project is licensed under the GNU Affero General Public License.
