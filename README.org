@@ -24,8 +24,8 @@
 
 Obtain a local copy of this repository with =git clone= and enter it.
 #+begin_example
-  % git clone https://github.com/vs-123/l-tail.git
-  % cd l-tail
+  % git clone https://github.com/vs-123/dman.git
+  % cd dman
 #+end_example
 
 Create a =build= directory and build this project with =cmake= inside it
