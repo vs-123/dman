@@ -20,6 +20,28 @@
 
 - *[FILESYSTEM BOUNDARY]* -- *dman* stays within the same filesystem as the starting directory with the use of =FTW_MOUNT= flag. This prevents the utility from accidentally traversing into mounted network shares or pseudo-filesystems like =/proc=, =/sys=, etc., or other disks
 
+** BUILD INSTRUCTIONS
+
+Obtain a local copy of this repository with =git clone= and enter it.
+#+begin_example
+  % git clone https://github.com/vs-123/l-tail.git
+  % cd l-tail
+#+end_example
+
+Create a =build= directory and build this project with =cmake= inside it
+#+begin_example
+  % mkdir build && cd build
+  % cmake ..
+  % cmake --build .
+  % ls -F
+  dman*  compile_commands.json  Makefile  CMakeCache.txt
+#+end_example
+
+You may now use the generated binary =dman=
+#+begin_example  
+  % ./dman --help
+#+end_example
+
 ** BENCHMARK
 
 The following benchmark demonstrates the memory efficiency of =dman= against standard system =find= utility using two dummy cache directories. This was run on FreeBSD.
@@ -56,7 +78,7 @@ drwxr-xr-x 253 vs  vs   7.9K  9 Mar 04:54 dummy-cache-B/
 
 *** OBSERVATIONS
 
-- *RESIDENT SET SIZE* -- As we see in the output, =dman= maintains a lower peak memory footprint compared to =find=.
+- *RESIDENT SET SIZE* -- As we see in the output, =dman= maintains a lower peak memory footprint compared to =find=. Since =dman= performs all evaluation (size, age, depth) within the initial =nftw= callback, it avoids secondary stat calls or additional memory allocation per file. This results in a tighter instruction-to-throughput ratio.
 
 - *INSTRUCTION EFFICIENCY* -- =dman= completes the scan by retiring fewer instructions (~153 million vs. ~169 million). This implies our implementation is a bit more optimised for the specific task of directory pruning based on age and size.
 
