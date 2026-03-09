@@ -261,7 +261,7 @@ main (int argc, char **argv)
 
    g_policy = &p;
 
-   printf ("[STATUS] PRUNING %s...\n", expanded_dir);
+   printf ("[STATUS] PRUNING '%s'...\n", expanded_dir);
    prune_run (expanded_dir);
    printf ("[STATUS] DONE. EXITING...\n");
 
