@@ -1,6 +1,6 @@
 * dman
 
-*dman* is a simple, POSIX-compliant, policy-based directory pruner written in C99 designed for high-performance cleanup of volatile cache and temporary storage. *dman* does not rely on external dependencies nor any GNU extensions in favour of portable C99.
+*dman* is a simple, POSIX-compliant, policy-based directory pruner written in C99 designed for high-performance cleanup of volatile cache and transient storage structures. *dman* does not rely on external dependencies nor any GNU extensions in favour of portable C99.
 
 *dman* performs its task without the overhead of massive directory tree buffers, utilising efficient, stream-oriented traversal.
 
