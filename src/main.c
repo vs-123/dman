@@ -159,7 +159,7 @@ print_info (void)
 {
 #define pinfo(aspect, detail) printf ("   * %-17s %s\n", aspect, detail)
    printf ("[INFO]\n");
-   printf ("   DMAN -- TODO\n");
+   printf ("   DMAN -- A SIMPLE, POSIX-COMPLIANT, POLICY-BASED DIRECTORY PRUNER WRITTEN IN C99\n");
    printf ("\n");
    pinfo ("[AUTHOR]", "vs-123 @ https://github.com/vs-123");
    pinfo ("[REPOSITORY]", "https://github.com/vs-123/dman");
