@@ -16,6 +16,49 @@
 
 - *[MINIMAL MEMORY FOOTPRINT]* -- *dman* uses a stack-based traversal pattern rather than building recursive node arrays. This makes *dman* maintain a negligible resident memory footprint even on massive cache structures.
 
+** BENCHMARK
+
+The following benchmark demonstrates the memory efficiency of =dman= against standard system =find= utility using two dummy cache directories. This was run on FreeBSD.
+
+The script merely executes both programs with =/usr/bin/time -l= to display metrics.
+
+#+begin_example
+% sh ../scripts/gen-test.sh
+[INFO] DIRECTORY dummy-cache-A GENERATED AND POPULATED
+[INFO] DIRECTORY dummy-cache-B GENERATED AND POPULATED
+[DONE] EXITING...
+
+% ls -l .test.log
+drwxr-xr-x 253 vs  vs   7.9K  9 Mar 04:54 dummy-cache-A/
+drwxr-xr-x 253 vs  vs   7.9K  9 Mar 04:54 dummy-cache-B/
+
+% sh ../scripts/run-bench.sh 
+[INFO] BENCHMARKING DMAN...
+[INFO] BENCHMARKING FIND...
+[RESULTS]
+===  DMAN  ===
+        0.01 real         0.00 user         0.01 sys
+             1474560  maximum resident set size
+           153256463  instructions retired
+            41028226  cycles elapsed
+             1130808  peak memory footprint
+===  FIND  ===
+        0.01 real         0.00 user         0.01 sys
+             1507328  maximum resident set size
+           169091683  instructions retired
+            43661846  cycles elapsed
+             1179864  peak memory footprint
+#+end_example
+
+*** OBSERVATIONS
+
+- *RESIDENT SET SIZE* -- As we see in the output, =dman= maintains a lower peak memory footprint compared to =find=.
+
+- *INSTRUCTION EFFICIENCY* -- =dman= completes the scan by retiring fewer instructions (~153 million vs. ~169 million). This implies our implementation is a bit more optimised for the specific task of directory pruning based on age and size.
+
+- *REAL-TIME THROUGHPUT* -- The slightly lower =cycles elapsed= (~41 million vs. ~43.6 million) indicates that =dman= is a bit more efficient in its CPU usage for this specific workload and hence provides faster results whilst consuming slightly fewer system resources.
+
+  
   
 ** LICENSE
 
