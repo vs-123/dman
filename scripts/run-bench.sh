@@ -10,4 +10,10 @@ echo "[INFO] BENCHMARKING DMAN..."
 echo "[INFO] BENCHMARKING FIND..."
 /usr/bin/time -l find dummy-cache-B -type f -delete > /dev/null 2> find-mem.txt
 
-echo "[OK] CLEANUP COMPLETE"
+echo "[RESULTS]"
+echo "===  DMAN  ==="
+cat dman-mem.txt
+
+echo "===  FIND  ==="
+cat find-mem.txt
+

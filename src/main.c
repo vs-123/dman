@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <limits.h>
 #include <time.h>
 
 #define _XOPEN_SOURCE 500
@@ -259,7 +260,7 @@ main (int argc, char **argv)
          return (result == 0) ? 0 : 1;
       }
 
-   char expanded_dir[65536];
+   char expanded_dir[PATH_MAX];
    expand_tilde (p.dir, expanded_dir, sizeof (expanded_dir));
 
    g_policy = &p;

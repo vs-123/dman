@@ -1,17 +1,22 @@
 * dman
 
-dman is a lightweight, high-performance, POSIX-compliant utility designed to automate the pruning of temporary files and orphaned cache directories.
+*dman* is a simple, POSIX-compliant, policy-based directory pruner written in C99 designed for high-performance cleanup of volatile cache and temporary storage. *dman* does not rely on external dependencies nor any GNU extensions in favour of portable C99.
+
+*dman* performs its task without the overhead of massive directory tree buffers, utilising efficient, stream-oriented traversal.
 
 ** FEATURES
 
-- *[DEPTH LIMIT]* -- A hard recursive depth limit is implemented to prevent accidental deletion of critical system files.
+- *[POLICY-DRIVEN TRAVERSAL]* -- Control over file removal based on maximum-age (in days) and minimum-size (bytes)
 
-- *[POLICY-DRIVEN]* -- Files are pruned based on a simple boolean OR logic: exceeding a maximum age OR exceeding a minimum size threshold.
+- *[HARD RECURSION GUARD]* -- A strict maximum depth limit is implemented to prevent runaway deletion. This ensures safety even when targeting root-adjacent paths
 
-- *[EFFICIENCY]* -- Utilises the POSIX =nftw= API to perform depth-first traversal with a controlled number of open file descriptors. This ensures minimal memory overhead even on deep directory structures.
+- *[ZERO-DEPENDENCY CORE]* -- Compiles with standard C99. No GNU extensions nor any external libraries were used. Just the standard library and POSIX =ftw= & =unistd=
 
-- *[VERIFICATION]* -- Features a built-in =--dry-run= mode that allows you to audit exactly what will be unlinked before execution.
+- *[DRY-RUN]* -- Provides a *--dry-run* mode that allows you to audit before making any permanent disk mutation
 
+- *[MINIMAL MEMORY FOOTPRINT]* -- *dman* uses a stack-based traversal pattern rather than building recursive node arrays. This makes *dman* maintain a negligible resident memory footprint even on massive cache structures.
+
+  
 ** LICENSE
 
 This project is licensed under the GNU Affero General Public License.
