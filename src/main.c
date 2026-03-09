@@ -16,6 +16,7 @@ typedef struct
    bool should_dry_run;
    size_t max_age;
    off_t min_size;
+   off_t total_freed;
    int max_depth;
    char *dir;
 } policy_t;
@@ -49,12 +50,14 @@ prune_worker (const char *filepath, const struct stat *sb, int typeflag,
                printf ("[DRY RUN] DELETE: '%s'   (AGE: %.1f DAYS, SIZE: %lld "
                        "BYTES)\n",
                        filepath, age_days, sb->st_size);
+               g_policy->total_freed += sb->st_size;
             }
          else
             {
                if (unlink (filepath) == 0)
                   {
                      printf ("[SUCCESS] DELETED '%s'\n", filepath);
+                     g_policy->total_freed += sb->st_size;
                   }
                else
                   {
@@ -138,8 +141,8 @@ print_usage (const char *program_name)
    printf (
        "[USAGE] %s [FLAGS] [<DIRECTORY_PATH> <MAX_AGE_IN_DAYS> <MIN_SIZE>]\n",
        program_name);
-   printf (
-	   "[DESC.] DELETE CONTENTS OF <DIRECTORY_PATH> THAT ARE EITHER OLDER THAN <MAX_AGE_IN_DAYS> OR LARGER THAN <MIN_SIZE> BYTES\n");
+   printf ("[DESC.] DELETE CONTENTS OF <DIRECTORY_PATH> THAT ARE EITHER OLDER "
+           "THAN <MAX_AGE_IN_DAYS> OR LARGER THAN <MIN_SIZE> BYTES\n");
 
    printf ("[FLAGS]\n");
    popt ("--HELP, -H, -?", "PRINT THIS HELP MESSAGE AND EXIT");
@@ -263,7 +266,11 @@ main (int argc, char **argv)
 
    printf ("[STATUS] PRUNING '%s'...\n", expanded_dir);
    prune_run (expanded_dir);
-   printf ("[STATUS] DONE. EXITING...\n");
+
+   printf ("[SUMMARY] TOTAL SPACE SAVED %.2f MB\n",
+           (double)p.total_freed / (1024 * 1024));
+
+   printf ("[STATUS] DONE\n");
 
    return 0;
 }
