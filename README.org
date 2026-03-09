@@ -1,20 +1,24 @@
 * dman
 
-*dman* is a simple, POSIX-compliant, policy-based directory pruner written in C99 designed for high-performance cleanup of volatile cache and transient storage structures. *dman* does not rely on external dependencies nor any GNU extensions in favour of portable C99.
+*dman* is a simple, POSIX-compliant, policy-based directory pruner written in C99 designed for high-performance cleanup of volatile cache and transient storage structures.
 
-*dman* performs its task without the overhead of massive directory tree buffers, utilising efficient, stream-oriented traversal.
+*dman* functions by performing a targeted, stream-oriented traversal of the filesystem. Instead of indexing an entire directory structure into a memory-heavy tree or list, =dman= utilises the POSIX =nftw= interface to process files one by one as it encounters them. This callback-based architecture ensures that the memory footprint remains constant regardless of how many thousands of files are contained within your target directories.
 
 ** FEATURES
 
 - *[POLICY-DRIVEN TRAVERSAL]* -- Control over file removal based on maximum-age (in days) and minimum-size (bytes)
 
-- *[HARD RECURSION GUARD]* -- A strict maximum depth limit is implemented to prevent runaway deletion. This ensures safety even when targeting root-adjacent paths
+- *[HARD RECURSION GUARD]* -- A strict maximum depth limit is implemented to prevent runaway deletion. This acts as a fail-safe that preventes accidental deletion of broad root-level directory structures should the user point =dman= to a misconfigured path
 
 - *[ZERO-DEPENDENCY CORE]* -- Compiles with standard C99. No GNU extensions nor any external libraries were used. Just the standard library and POSIX =ftw= & =unistd=
 
 - *[DRY-RUN]* -- Provides a *--dry-run* mode that allows you to audit before making any permanent disk mutation
 
-- *[MINIMAL MEMORY FOOTPRINT]* -- *dman* uses a stack-based traversal pattern rather than building recursive node arrays. This makes *dman* maintain a negligible resident memory footprint even on massive cache structures.
+- *[MINIMAL MEMORY FOOTPRINT]* -- *dman* uses a stream-based traversal pattern in the stead of building recursive node arrays. This allows *dman* to maintain a low resident memory footprint even on large cache structures
+
+- *[SYMLINK AVOIDANCE]* -- *dman* strictly avoids following symbolic links with the use of =FTW_PHYS= flag. This ensures that the utility does not accidentally trigger deletions outside of the intended target directory
+
+- *[FILESYSTEM BOUNDARY]* -- *dman* stays within the same filesystem as the starting directory with the use of =FTW_MOUNT= flag. This prevents the utility from accidentally traversing into mounted network shares or pseudo-filesystems like =/proc=, =/sys=, etc., or other disks
 
 ** BENCHMARK
 
