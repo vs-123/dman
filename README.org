@@ -1,6 +1,16 @@
 * dman
 
-TODO
+dman is a lightweight, high-performance, POSIX-compliant utility designed to automate the pruning of temporary files and orphaned cache directories.
+
+** FEATURES
+
+- *[DEPTH LIMIT]* -- A hard recursive depth limit is implemented to prevent accidental deletion of critical system files.
+
+- *[POLICY-DRIVEN]* -- Files are pruned based on a simple boolean OR logic: exceeding a maximum age OR exceeding a minimum size threshold.
+
+- *[EFFICIENCY]* -- Utilises the POSIX =nftw= API to perform depth-first traversal with a controlled number of open file descriptors. This ensures minimal memory overhead even on deep directory structures.
+
+- *[VERIFICATION]* -- Features a built-in =--dry-run= mode that allows you to audit exactly what will be unlinked before execution.
 
 ** LICENSE
 
