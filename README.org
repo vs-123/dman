@@ -28,6 +28,8 @@ Obtain a local copy of this repository with =git clone= and enter it.
   % cd dman
 #+end_example
 
+*CMAKE METHOD*
+
 Create a =build= directory and build this project with =cmake= inside it
 #+begin_example
   % mkdir build && cd build
@@ -35,6 +37,16 @@ Create a =build= directory and build this project with =cmake= inside it
   % cmake --build .
   % ls -F
   dman*  compile_commands.json  Makefile  CMakeCache.txt
+#+end_example
+
+*MANUAL METHOD*
+
+Create a =build= directory to keep things tidy, and then use your favourite compiler to compile the source code.
+#+begin_example
+  % mkdir build && cd build
+  % cc -o dman ../src/main.c
+  % ls -F
+  dman*
 #+end_example
 
 You may now use the generated binary =dman=
