@@ -24,7 +24,7 @@
 
 == BUILD INSTRUCTIONS
 
-Obtain a local copy of this repository with =git clone= and enter it.
+Obtain a local copy of this repository with `git clone` and enter it.
 [source,shell]
 ----
 % git clone https://github.com/vs-123/dman.git
