@@ -22,13 +22,14 @@
 
 * **[FILESYSTEM BOUNDARY]** {em} *dman* stays within the same filesystem as the starting directory with the use of `FTW_MOUNT` flag. This prevents the utility from accidentally traversing into mounted network shares or pseudo-filesystems like `/proc`, `/sys`, etc., or other disks
 
-** BUILD INSTRUCTIONS
+== BUILD INSTRUCTIONS
 
 Obtain a local copy of this repository with =git clone= and enter it.
-#+begin_example
-  % git clone https://github.com/vs-123/dman.git
-  % cd dman
-#+end_example
+[source,shell]
+----
+% git clone https://github.com/vs-123/dman.git
+% cd dman
+----
 
 *CMAKE METHOD*
 
